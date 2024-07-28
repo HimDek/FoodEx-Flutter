@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340314306849",
+    "project_id": "foosexcloudmessaging",
+    "storage_bucket": "foosexcloudmessaging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340314306849:android:7462015f9daae69939e660",
+        "android_client_info": {
+          "package_name": "com.example.food_delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6s50ZxxIjvLj9rFyWby2es3aiIDBkjnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
