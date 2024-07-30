@@ -143,35 +143,47 @@ Form emailForm(BuildContext context) => Form(
         decoration: InputDecoration(
           label: const Text('Email address'),
           hintText: 'Email Address',
-          suffixIcon: IconButton(
-            onPressed: () async {
-              if (emailKey.currentState!.validate()) {
-                var otp = await getEmailOtp(emailController.text);
-                final ScaffoldMessengerState scaffold =
-                    scaffoldKey.currentState!;
-                final snackBar = SnackBar(
-                  showCloseIcon: true,
-                  content: Text(otp != 0
-                      ? "Error: Unable to send OTP!"
-                      : "An OTP was sent."),
-                );
-                scaffold.showSnackBar(snackBar);
-              }
-            },
-            icon: Text(
-              'Get OTP',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+          suffixIcon: ElevatedButton(
+            onPressed: EmailValidator.validate(emailController.text)
+                ? () async {
+                    if (emailKey.currentState!.validate()) {
+                      var otp = await getEmailOtp(emailController.text);
+                      final ScaffoldMessengerState scaffold =
+                          scaffoldKey.currentState!;
+                      final snackBar = SnackBar(
+                        showCloseIcon: true,
+                        content: Text(otp != 0
+                            ? "Error: Unable to send OTP!"
+                            : "An OTP was sent."),
+                      );
+                      scaffold.showSnackBar(snackBar);
+                    }
+                  }
+                : null,
+            style: ButtonStyle(
+              foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return Theme.of(context).colorScheme.secondary;
+                  }
+                  return Theme.of(context).colorScheme.primary;
+                },
               ),
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              ),
+              textStyle: const WidgetStatePropertyAll(TextStyle(fontSize: 14)),
             ),
+            child: const Text('Get OTP'),
           ),
         ),
         validator: (value) {
-          return value == null || value.isEmpty
+          String? valid = value == null || value.isEmpty
               ? 'This field is required'
               : !EmailValidator.validate(value)
                   ? 'Enter a valid Email'
                   : null;
+          return valid;
         },
         keyboardType: TextInputType.emailAddress,
       ),
