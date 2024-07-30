@@ -42,7 +42,7 @@ Future<String?> readStorage(String key) async {
 
 const String baseUrl = 'https://api.foodex.barakbits.com/';
 
-const String getOTPUrl = 'api/user/otp/';
+const String getPhoneOTPUrl = 'api/user/phoneotp/';
 const String getEmailOTPUrl = 'api/user/emailotp/';
 const String tokenUrl = 'api/token/';
 const String tokenRefreshUrl = 'api/token/refresh/';

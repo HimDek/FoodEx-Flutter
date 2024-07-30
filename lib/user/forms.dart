@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:email_validator/email_validator.dart';
 import '../common/components.dart';
 import 'api.dart';
 
@@ -7,14 +8,18 @@ TextEditingController restaurantnameController = TextEditingController();
 TextEditingController firstnameController = TextEditingController();
 TextEditingController lastnameController = TextEditingController();
 TextEditingController phoneController = TextEditingController();
-TextEditingController otpController = TextEditingController();
+TextEditingController phoneOtpController = TextEditingController();
+TextEditingController emailController = TextEditingController();
+TextEditingController emailOtpController = TextEditingController();
 TextEditingController upiIDController = TextEditingController();
 
 final GlobalKey<FormState> restaurantnameKey = GlobalKey<FormState>();
 final GlobalKey<FormState> firstnameKey = GlobalKey<FormState>();
 final GlobalKey<FormState> lastnameKey = GlobalKey<FormState>();
 final GlobalKey<FormState> phoneKey = GlobalKey<FormState>();
-final GlobalKey<FormState> otpKey = GlobalKey<FormState>();
+final GlobalKey<FormState> phoneOtpKey = GlobalKey<FormState>();
+final GlobalKey<FormState> emailKey = GlobalKey<FormState>();
+final GlobalKey<FormState> emailOtpKey = GlobalKey<FormState>();
 final GlobalKey<FormState> upiIDKey = GlobalKey<FormState>();
 
 Form restaurantnameForm(BuildContext context) => Form(
@@ -75,7 +80,7 @@ Form phoneForm(BuildContext context) => Form(
           suffixIcon: IconButton(
             onPressed: () async {
               if (phoneKey.currentState!.validate()) {
-                var otp = await getOtp(phoneController.text);
+                var otp = await getPhoneOtp(phoneController.text);
                 final ScaffoldMessengerState scaffold =
                     scaffoldKey.currentState!;
                 final snackBar = SnackBar(
@@ -106,11 +111,11 @@ Form phoneForm(BuildContext context) => Form(
         keyboardType: TextInputType.phone,
       ),
     );
-Form otpForm(BuildContext context) => Form(
-      key: otpKey,
+Form phoneOtpForm(BuildContext context) => Form(
+      key: phoneOtpKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: TextFormField(
-        controller: otpController,
+        controller: phoneOtpController,
         maxLength: 6,
         validator: (value) {
           return value == null || value.isEmpty
@@ -120,8 +125,73 @@ Form otpForm(BuildContext context) => Form(
                   : null;
         },
         decoration: const InputDecoration(
-          label: Text('OTP'),
+          label: Text('Phone OTP'),
           hintText: 'OTP sent to your mobile number',
+        ),
+        keyboardType: const TextInputType.numberWithOptions(
+            signed: false, decimal: false),
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
+      ),
+    );
+Form emailForm(BuildContext context) => Form(
+      key: emailKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: TextFormField(
+        controller: emailController,
+        decoration: InputDecoration(
+          label: const Text('Email address'),
+          hintText: 'Email Address',
+          suffixIcon: IconButton(
+            onPressed: () async {
+              if (emailKey.currentState!.validate()) {
+                var otp = await getEmailOtp(emailController.text);
+                final ScaffoldMessengerState scaffold =
+                    scaffoldKey.currentState!;
+                final snackBar = SnackBar(
+                  showCloseIcon: true,
+                  content: Text(otp != 0
+                      ? "Error: Unable to send OTP!"
+                      : "An OTP was sent."),
+                );
+                scaffold.showSnackBar(snackBar);
+              }
+            },
+            icon: Text(
+              'Get OTP',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+        validator: (value) {
+          return value == null || value.isEmpty
+              ? 'This field is required'
+              : !EmailValidator.validate(value)
+                  ? 'Enter a valid Email'
+                  : null;
+        },
+        keyboardType: TextInputType.emailAddress,
+      ),
+    );
+Form emailOtpForm(BuildContext context) => Form(
+      key: emailOtpKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: TextFormField(
+        controller: emailOtpController,
+        maxLength: 6,
+        validator: (value) {
+          return value == null || value.isEmpty
+              ? 'This field is required'
+              : value.length < 6
+                  ? 'OTP must be 6 digits'
+                  : null;
+        },
+        decoration: const InputDecoration(
+          label: Text('Email OTP'),
+          hintText: 'OTP sent to your email',
         ),
         keyboardType: const TextInputType.numberWithOptions(
             signed: false, decimal: false),

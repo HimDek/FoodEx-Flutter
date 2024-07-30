@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/user/updatecontact.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:upi_payment_qrcode_generator/upi_payment_qrcode_generator.dart';
 import '../common/components.dart';
@@ -194,6 +195,62 @@ class Profile extends StatelessWidget {
                 ),
                 title: Text('+91 ${userData['username']}'),
                 subtitle: const Text('Phone number'),
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdatePhone(
+                          onSubmit: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const Divider(
+                height: 10,
+                thickness: 1,
+                indent: 16,
+                endIndent: 16,
+                color: Colors.grey,
+              ),
+              ListTile(
+                onTap: () => href(context,
+                    scheme: 'mailto', path: '${userData['email']}'),
+                leading: Icon(
+                  Icons.mail,
+                  size: 32,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+                title: Text('${userData['email']}'),
+                subtitle: const Text('Email'),
+                trailing: IconButton(
+                  icon: Icon(
+                    Icons.edit,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdateEmail(
+                          onSubmit: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
               const Divider(
                 height: 10,
@@ -329,8 +386,6 @@ class EditProfileState extends State<EditProfile> {
     }
     firstnameController.text = homeKey.currentState!.userData['first_name'];
     lastnameController.text = homeKey.currentState!.userData['last_name'];
-    phoneController.text = homeKey.currentState!.userData['username'];
-    otpController.text = '';
     upiIDController.text = homeKey.currentState!.userData['profile']['upiID'];
   }
 
@@ -412,10 +467,6 @@ class EditProfileState extends State<EditProfile> {
                 const SizedBox(height: 20),
               ])
                 widget,
-            phoneForm(context),
-            const SizedBox(height: 20),
-            otpForm(context),
-            const SizedBox(height: 20),
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
@@ -454,16 +505,6 @@ class EditProfileState extends State<EditProfile> {
                       Map profileData = {};
                       if (_image != null) {
                         profileData['image'] = _image;
-                      }
-                      if (phoneKey.currentState!.validate() &&
-                          phoneController.text !=
-                              homeKey.currentState!.userData['username']) {
-                        if (otpKey.currentState!.validate()) {
-                          profileData['phone'] = phoneController.text;
-                          profileData['otp'] = otpController.text;
-                        } else {
-                          validated = false;
-                        }
                       }
                       if (homeKey.currentState!.userData['profile']['kind'] ==
                           'R') {

@@ -51,6 +51,7 @@ dependencies:
   flutter_map_location_marker:
   upi_payment_qrcode_generator: 
   material_floating_search_bar_2: 
+  email_validator:
 
 dev_dependencies:
   flutter_test:

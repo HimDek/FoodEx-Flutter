@@ -4,10 +4,10 @@ import 'package:http/http.dart';
 import '../common/api.dart';
 import '../common/components.dart';
 
-Future<int> getOtp(String number) async {
+Future<int> getPhoneOtp(String number) async {
   try {
-    Response response =
-        await post(Uri.parse(baseUrl + getOTPUrl), body: {'number': number});
+    Response response = await post(Uri.parse(baseUrl + getPhoneOTPUrl),
+        body: {'number': number});
     var data = jsonDecode(response.body.toString());
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       return 0;
@@ -25,18 +25,41 @@ Future<int> getOtp(String number) async {
   }
 }
 
-Future<int> register(
-    String phone, int otp, String firstName, String lastName) async {
+Future<int> getEmailOtp(String email) async {
+  try {
+    Response response =
+        await post(Uri.parse(baseUrl + getEmailOTPUrl), body: {'email': email});
+    var data = jsonDecode(response.body.toString());
+    if (response.statusCode >= 200 && response.statusCode <= 299) {
+      return 0;
+    } else {
+      throw (data['detail']);
+    }
+  } catch (e) {
+    final ScaffoldMessengerState scaffold = scaffoldKey.currentState!;
+    final snackBar = SnackBar(
+      showCloseIcon: true,
+      content: Text('Request Failed! $e.'),
+    );
+    scaffold.showSnackBar(snackBar);
+    return 1;
+  }
+}
+
+Future<int> register(String email, int emailOtp, String phone, int phoneOtp,
+    String firstName, String lastName) async {
   try {
     Response response = await post(Uri.parse(baseUrl + usersUrl), body: {
+      'email': email,
+      'emailotp': '$emailOtp',
       'phone': phone,
-      'otp': '$otp',
+      'phoneotp': '$phoneOtp',
       'first_name': firstName,
       'last_name': lastName,
     });
 
     if (response.statusCode >= 200 && response.statusCode <= 299) {
-      await login(phone, otp);
+      await login(email, emailOtp);
       return 0;
     } else {
       throw (jsonDecode(response.body.toString())['detail'] ??
@@ -54,12 +77,12 @@ Future<int> register(
   }
 }
 
-Future<int> login(String phone, int otp) async {
+Future<int> login(String email, int otp) async {
   String fullTokenUrl = baseUrl + tokenUrl;
 
   try {
     Response response = await post(Uri.parse(fullTokenUrl),
-        body: {'username': phone, 'password': '$otp'});
+        body: {'email': email, 'password': '$otp'});
 
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       var data = jsonDecode(response.body.toString());
@@ -128,9 +151,13 @@ Future<int> updateProfile(Function() doLogin, profileData) async {
     if (profileData['restaurantname'] != null) {
       request.fields['restaurantname'] = profileData['restaurantname'];
     }
-    if (profileData['phone'] != null && profileData['otp'] != null) {
+    if (profileData['phone'] != null && profileData['phoneotp'] != null) {
       request.fields['phone'] = profileData['phone'];
-      request.fields['otp'] = profileData['otp'];
+      request.fields['phoneotp'] = profileData['phoneotp'];
+    }
+    if (profileData['email'] != null && profileData['emailotp'] != null) {
+      request.fields['email'] = profileData['email'];
+      request.fields['emailotp'] = profileData['emailotp'];
     }
     if (profileData['fcmtoken'] != null) {
       request.fields['fcmtoken'] = profileData['fcmtoken'];

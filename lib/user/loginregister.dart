@@ -58,10 +58,10 @@ class LoginRegisterState extends State<LoginRegister> {
                   setState(() {
                     _isLoading = true;
                   });
-                  if (phoneKey.currentState!.validate() &&
-                      otpKey.currentState!.validate()) {
-                    if ((await login(phoneController.text,
-                            int.parse(otpController.text)) ==
+                  if (emailKey.currentState!.validate() &&
+                      emailOtpKey.currentState!.validate()) {
+                    if ((await login(emailController.text,
+                            int.parse(emailOtpController.text)) ==
                         0)) {
                       widget.onLog();
                     }
@@ -105,6 +105,14 @@ class LoginRegisterState extends State<LoginRegister> {
       const SizedBox(
         height: 10,
       ),
+      phoneForm(context),
+      const SizedBox(
+        height: 10,
+      ),
+      phoneOtpForm(context),
+      const SizedBox(
+        height: 10,
+      ),
       SizedBox(
         width: double.infinity,
         child: ElevatedButton(
@@ -139,12 +147,14 @@ class LoginRegisterState extends State<LoginRegister> {
                   setState(() {
                     _isLoading = true;
                   });
-                  if (phoneKey.currentState!.validate() &&
-                      otpKey.currentState!.validate() &&
+                  if (emailKey.currentState!.validate() &&
+                      emailOtpKey.currentState!.validate() &&
                       firstnameKey.currentState!.validate()) {
                     if ((await register(
+                            emailController.text,
+                            int.parse(emailOtpController.text),
                             phoneController.text,
-                            int.parse(otpController.text),
+                            int.parse(phoneOtpController.text),
                             firstnameController.text,
                             lastnameController.text)) ==
                         0) {
@@ -196,8 +206,14 @@ class LoginRegisterState extends State<LoginRegister> {
             const SizedBox(
               height: 20,
             ),
-            phoneForm(context),
-            otpForm(context),
+            emailForm(context),
+            const SizedBox(
+              height: 10,
+            ),
+            emailOtpForm(context),
+            const SizedBox(
+              height: 10,
+            ),
             Column(
               children: children,
             ),
