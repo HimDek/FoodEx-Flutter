@@ -95,7 +95,7 @@ class RestaurantPageState extends State<RestaurantPage> {
   late bool _hasLoadedDistance = false;
   late List _restaurantProductsData;
   late String _address = 'Loading...';
-  late int _distance = 0;
+  late double _distance = 0;
   late int _duration = 0;
 
   @override
@@ -783,7 +783,8 @@ class ProductState extends State<Product> {
                 ),
               ],
             ),
-            if (homeKey.currentState!.userData['profile']['kind'] == 'C' &&
+            if ((homeKey.currentState!.userData['profile'] ?? {})['kind'] ==
+                    'C' &&
                 (widget.productData['available'] == false ||
                     widget.productData['restaurant']['available'] == false))
               Positioned.fill(

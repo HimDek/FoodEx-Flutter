@@ -548,7 +548,7 @@ class HomeState extends State<Home> {
           ? Stack(
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(top: 64),
+                  padding: EdgeInsets.only(top: 128),
                   child: FoodPage(),
                 ),
                 SafeArea(

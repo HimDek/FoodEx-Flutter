@@ -79,12 +79,11 @@ Future<double> getDeliveryCharge(
       Uri.parse('$baseUrl$deliveryChargeUrl'),
       body: {
         'restaurant': '$restaurantId',
-        'latitude':
-            '${homeKey.currentState!.location.latitude}'.substring(0, 9),
-        'longitude':
-            '${homeKey.currentState!.location.longitude}'.substring(0, 9),
+        'latitude': '${homeKey.currentState!.location.latitude}',
+        'longitude': '${homeKey.currentState!.location.longitude}',
       },
     );
+
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       var data = jsonDecode(response.body.toString());
       return double.parse('${data['value']}');
